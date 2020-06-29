@@ -13,32 +13,41 @@ export class PhotoDNACloudService {
     //private readonly Match_Post_Url = 'http://httpbin.org/post';
 
     /**
-     * Matches the message against the PhotoDNA service if it contains am image
+     * Determine whether matchMessage is to be executed, which is the case if this message
+     * contains an image we can handle
+     * @param message 
+     * @param logger 
+     */
+    async preMatchMessage(message: IMessage, logger: ILogger): Promise<boolean> {
+        // is there an attachment ?
+        if (!message.attachments) {
+            return false;;
+        }
+        // is it an image ?
+        if (!message.attachments[0].imageUrl) {
+            return false;
+        }
+
+        var imageAttachment: any = message.attachments[0];
+        let imageMimeType = imageAttachment.imageType;
+        // does the PhotoDNA service support this attachment ?
+        if (!this.isSupportedImageMimeType(imageMimeType)) {
+            logger.warn('Could not perform match operation on unsupported image type ' + imageMimeType);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Matches the message against the PhotoDNA service. Before executing this method, be sure to call preMatchMessage
      * @param message 
      * @param logger 
      * @param read 
      * @param http 
      */
     async matchMessage(message: IMessage, logger: ILogger, read: IRead, http: IHttp): Promise<IMatchResult | undefined> {
-
-        // is there an attachment ?
-        if (!message.attachments) {
-            return undefined;
-        }
-        // is it an image ?
-        if (!message.attachments[0].imageUrl) {
-            return undefined;
-        }
-
-        var imageAttachment: any = message.attachments[0];
+        var imageAttachment: any = message.attachments![0];
         let imageMimeType = imageAttachment.imageType;
-
-        // does the PhotoDNA service support this attachment ?
-        if (!this.isSupportedImageMimeType(imageMimeType)) {
-            logger.info('Could not perform match operation on unsupported image type ' + imageMimeType);
-            return undefined;
-        }
-
         // determine image id and load it
         let imageId = imageAttachment.imageUrl.substring(0, imageAttachment.imageUrl.lastIndexOf('/')).replace('/file-upload/', '')
         // TODO better way to find image id?                
@@ -67,7 +76,6 @@ export class PhotoDNACloudService {
     private async performMatchOperation(http: IHttp, read: IRead, logger: ILogger, imageData: IImageData): Promise<IMatchResult | undefined> {
         const apiKey = await read.getEnvironmentReader().getSettings().getValueById('csem-api-key');
         if (apiKey) {
-
             let content = JSON.stringify({
                 "DataRepresentation": "inline",
                 "Value": imageData.data.toString('base64')
@@ -82,7 +90,7 @@ export class PhotoDNACloudService {
                     'Ocp-Apim-Subscription-Key': apiKey
                 }
             })
-            logger.debug('result', result.data)
+            // logger.debug('result', result.data)
             if (result.data) {
                 return result.data as IMatchResult;
             }
@@ -90,11 +98,7 @@ export class PhotoDNACloudService {
         return undefined;
     }
 
-    /**
-     * 
-     * @param mimeType 
-     */
-    private isSupportedImageMimeType(mimeType: string): Boolean {
+    isSupportedImageMimeType(mimeType: string): Boolean {
         switch (mimeType) {
             case ('image/gif'):
             case ('image/jpeg'):
