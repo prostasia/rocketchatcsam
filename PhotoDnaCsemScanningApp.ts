@@ -50,7 +50,7 @@ export class PhotoDnaCsemScanningApp extends App implements IPostMessageSent, IP
             packageValue: true,
             required: false,
             public: false,
-            i18nLabel: 'CSEM_Perform_Asynchronous_Valdiation_Label',
+            i18nLabel: 'CSEM_Perform_Asynchronous_Validation_Label',
             i18nDescription: 'CSEM_Perform_Asynchronous_Validation_Description'
         });
     }
