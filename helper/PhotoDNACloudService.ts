@@ -2,6 +2,7 @@ import { IHttp, ILogger, IRead } from "@rocket.chat/apps-engine/definition/acces
 import { IImageData } from "./IImageData";
 import { IMatchResult } from "./IMatchResult";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
+import { SETTING_PHOTODNA_API_KEY } from "../Settings";
 
 /**
  * Validate a message against the Microsoft PhotoDNA cloud service
@@ -10,7 +11,6 @@ import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 export class PhotoDNACloudService {
 
     private readonly Match_Post_Url = 'https://api.microsoftmoderator.com/photodna/v1.0/Match';
-    //private readonly Match_Post_Url = 'http://httpbin.org/post';
 
     /**
      * Determine whether matchMessage is to be executed, which is the case if this message
@@ -74,7 +74,7 @@ export class PhotoDNACloudService {
      * @see https://developer.microsoftmoderator.com/docs/services/57c7426e2703740ec4c9f4c3/operations/57c7426f27037407c8cc69e6
      */
     private async performMatchOperation(http: IHttp, read: IRead, logger: ILogger, imageData: IImageData): Promise<IMatchResult | undefined> {
-        const apiKey = await read.getEnvironmentReader().getSettings().getValueById('csem-api-key');
+        const apiKey = await read.getEnvironmentReader().getSettings().getValueById(SETTING_PHOTODNA_API_KEY);
         if (apiKey) {
             let content = JSON.stringify({
                 "DataRepresentation": "inline",
