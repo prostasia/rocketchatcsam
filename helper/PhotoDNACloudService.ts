@@ -21,7 +21,7 @@ export class PhotoDNACloudService {
     async preMatchMessage(message: IMessage, logger: ILogger): Promise<boolean> {
         // is there an attachment ?
         if (!message.attachments) {
-            return false;;
+            return false;
         }
         // is it an image ?
         if (!message.attachments[0].imageUrl) {
@@ -57,7 +57,7 @@ export class PhotoDNACloudService {
             return undefined;
         }
 
-        let result = await this.performMatchOperation(http, read, logger, {
+        let result = await this.performMatchOperation(http, read, {
             contentType: imageMimeType,
             data: imageBuffer
         });
@@ -69,11 +69,10 @@ export class PhotoDNACloudService {
      * Perform the match operation as defined by the PhotoDNA cloud service api
      * @param http 
      * @param read 
-     * @param logger 
      * @param imageData 
      * @see https://developer.microsoftmoderator.com/docs/services/57c7426e2703740ec4c9f4c3/operations/57c7426f27037407c8cc69e6
      */
-    private async performMatchOperation(http: IHttp, read: IRead, logger: ILogger, imageData: IImageData): Promise<IMatchResult | undefined> {
+    private async performMatchOperation(http: IHttp, read: IRead, imageData: IImageData): Promise<IMatchResult | undefined> {
         const apiKey = await read.getEnvironmentReader().getSettings().getValueById(SETTING_PHOTODNA_API_KEY);
         if (apiKey) {
             let content = JSON.stringify({
@@ -90,7 +89,6 @@ export class PhotoDNACloudService {
                     'Ocp-Apim-Subscription-Key': apiKey
                 }
             })
-            // logger.debug('result', result.data)
             if (result.data) {
                 return result.data as IMatchResult;
             }

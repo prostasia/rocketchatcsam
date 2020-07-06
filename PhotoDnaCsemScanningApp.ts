@@ -83,7 +83,7 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
             let _csvRoomNames = limitRoomNamesCsv.trim();
             let _csvRoomsArray = _csvRoomNames.split(',');
             for (const roomName of _csvRoomsArray) {
-                const room = await this.getAccessors().reader.getRoomReader().getByName(roomName);
+                const room = await this.getAccessors().reader.getRoomReader().getByName(roomName.toLowerCase());
                 if (room) {
                     this.getLogger().debug(`Watching room \'${roomName}\'`);
                     this.watchedRoomsId!.add(room.id);
@@ -106,13 +106,12 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
     async executePreMessageSentModify(message: IMessage, builder: IMessageBuilder, read: IRead, http: IHttp, persistence: IPersistence): Promise<IMessage> {
         let result = await this.photoDnaService.matchMessage(message, this.getLogger(), read, http);
         if (result && result.IsMatch) {
-            return this.handleMatchingMessage(result, message, read, persistence, builder);
-        } else {
-            return message;
-        }
+             this.handleMatchingMessage(result, message, read, persistence, builder);
+        } 
+        return builder.getMessage();
     }
 
-    private async handleMatchingMessage(result: IMatchResult, message: IMessage, read: IRead, persistence: IPersistence, builder: IMessageBuilder): Promise<IMessage> {
+    private async handleMatchingMessage(result: IMatchResult, message: IMessage, read: IRead, persistence: IPersistence, builder: IMessageBuilder): Promise<void> {
         this.getLogger().warn('CSEM-MATCH', message.id, message.sender, result);
 
         if (this.quarantineChannel) {
@@ -129,7 +128,6 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
         } else {
             this.getLogger().warn('No target channel for quarantined messages provided');
         }
-        return message;
     }
 
 }
