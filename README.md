@@ -1,7 +1,7 @@
 PhotoDNA CSEM scanning App
 ==========================
 
-*v0.2.2 - July 6, 2020*
+*v0.2.3 - July 27, 2020*
 
 This RocketchatApp does validate uploaded images against the [Microsoft PhotoDNA cloud service](https://www.microsoft.com/en-us/photodna)
 
@@ -35,6 +35,10 @@ If the target channel does not exist, the image will be removed from the message
 
 In `Limit image analysis to specified channels` you may provide a comma-separated-list of channels to limit the analysis to. In the depicted setting, only images uploaded in the channel `testchannel` will be subject to investigation by this app.
 
+Preventing child sexual abuse
+=============================
+For information on protecting your users who are at risk of being caught up in child sexual abuse, either as a victim or as a potential perpetrator, [Prostasia Foundation](https://prostasia.org) can help. We offer consulting services to platforms to help them eliminate abuse without interfering with the free speech of legitimate users. Our [Get Help page](https://prostasia.org/get-help) also offers a variety of support options for users, including the MAP Support Chat forum for which this app was originally developed.
+
 Further information
 ===================
 
@@ -51,6 +55,8 @@ Changelog
 * 0.2.2
   * Limit analysis to room names setting is now case-insensitive
   * Fix `Converting circular structure to JSON` bug
+* 0.2.3
+  * Added information about CSAM prevention resources
 
 Todos / Caveat
 ==============
