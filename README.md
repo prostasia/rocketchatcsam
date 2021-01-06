@@ -29,8 +29,8 @@ As Administrator go to Rocketchat settings / Apps and click on `Photo DNA CSEM-s
 
 ![App Details](doc/appDetails.png)
 
-In `API Subscription Key` you have to enter your api key - the service will
-not be active without the key.
+In `API Subscription Key` you have to enter your api key - the service will not be active without the key. This corresponds to the *primary key* received
+during the PhotoDNA registration.
 
 In `CSEM Quarantine Target Channel` you have to provide the link to a channel where quarantined messages will move to. Please be sure to have this channel
 created like shown in the following image:
@@ -63,11 +63,13 @@ Changelog
   * Fix `Converting circular structure to JSON` bug
 * 0.2.3
   * Added information about CSAM prevention resources
+* 0.3.0
+  * Added automated report functionality (configurable)
 
 Todos / Caveat
 ==============
 
 * Currently the user posting the matching image does not see any actions happening, just the message not occuring.
-* Automated Report Violation is not  supported
 * The images are transported to the Microsoft PhotoDNA Service. The Edge-Hash algorithm is not implemented.
 * App logging is too verbose at the moment https://github.com/RocketChat/Rocket.Chat/issues/13312
+* Real user IP is not available for automated report functionality https://github.com/RocketChat/feature-requests/issues/433
