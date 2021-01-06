@@ -1,9 +1,12 @@
+import { IImageData } from "./IImageData";
+
 export interface IMatchResult {
     Status: IMatchOperationStatus;
     TrackingId: string;
     ContentId?: string;
     IsMatch?: boolean;
     MatchDetails?: IMatchDetails;
+    ImageData?: IImageData;
 }
 
 export interface IMatchOperationStatus {
