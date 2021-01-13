@@ -1,8 +1,0 @@
-{
-    "CSEM_Api_Key_Label": "API Subscription Key",
-    "CSEM_Api_Key_Description": "Photo DNA Api Service Subscription Key (this app is only active with valid api key)",
-    "CSEM_Quarantine_Target_Channel_Label": "CSEM Quarantine Target Channel",
-    "CSEM_Quarantine_Target_Channel_Description": "Channel to move CSEM quarantined images to. Be sure to create this channel as documented.",
-    "CSEM_Limit_Analysis_To_Channels_Csv_Label": "Limit image analysis to specified channels",
-    "CSEM_Limit_Analysis_To_Channels_Csv_Description": "A comma separated values list of channels (e.g. \"channelA,channelB\") to limit image upload analysis to, all channels if empty"
-}
