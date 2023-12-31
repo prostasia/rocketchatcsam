@@ -9,6 +9,12 @@ out/
 .idea/
 .idea_modules/
 
+# Visual Studio Code
+.vscode/
+
+# Rocket.Chat development
+.rcappsconfig
+
 # macOS
 .DS_Store
 .AppleDouble
