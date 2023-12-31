@@ -10,7 +10,7 @@ Image validation happens before the actual message is being shown. Images that m
 Installation
 ============
 
-The plugin is distributed as a [Rocketchat App](https://docs.rocket.chat/guides/rocket-chat-apps). Installation can be carried out by the administrator via the `Setings / Apps / Upload App` util, as shown in the following image.
+The plugin is distributed as a [Rocketchat App](https://developer.rocket.chat/apps-engine/). Installation can be carried out by the administrator via the `Setings / Apps / Upload App` util, as shown in the following image.
 
 ![Installation](doc/install1.png)
 
@@ -29,11 +29,9 @@ As Administrator go to Rocketchat settings / Apps and click on `Photo DNA CSEM-s
 
 ![App Details](doc/appDetails.png)
 
-In `API Subscription Key` you have to enter your api key - the service will not be active without the key. This corresponds to the *primary key* received
-during the PhotoDNA registration.
+In `API Subscription Key` you have to enter your api key - the service will not be active without the key. This corresponds to the *primary key* received during the PhotoDNA registration.
 
-In `CSEM Quarantine Target Channel` you have to provide the link to a channel where quarantined messages will move to. Please be sure to have this channel
-created like shown in the following image:
+In `CSEM Quarantine Target Channel` you have to provide the link to a channel where quarantined messages will move to. Please be sure to have this channel created like shown in the following image:
 
 ![targetChannel](doc/privateQuarantineChannel.png)
 
@@ -65,7 +63,9 @@ Changelog
   * Added information about CSAM prevention resources
 * 0.3.0
   * Added automated report functionality (configurable)
-
+* 0.3.1
+  * Fix `Invalid or missing request parameter(s)` bug
+  
 Todos / Caveat
 ==============
 
