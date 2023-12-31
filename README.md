@@ -80,7 +80,7 @@ In `CSEM Quarantine Target Channel` you have to provide the channel ID where qua
 
 If the target channel does not exist, the image will be removed from the message.
 
-In `Limit image analysis to specified channels` you may provide a comma-separated-list of channels to limit the analysis to. In the depicted setting, only images uploaded in the channel `testchannel` will be subject to investigation by this app.
+In `Limit image analysis to specified channels` you may provide a comma-separated list of channels to limit the analysis to. In the depicted setting, only images uploaded in the channel `testchannel` will be subject to investigation by this app.
 
 Troubleshooting
 ===============
@@ -111,6 +111,8 @@ Changelog
 * 0.3.0
   * Added automated report functionality (configurable)
 * 0.3.1
+  * Patched minimatch from 3.0.4 to 3.1.2 to mitigate security vulnerability
+* 0.3.2
   * Fix `Invalid or missing request parameter(s)` bug
 
 Todos / Caveat
