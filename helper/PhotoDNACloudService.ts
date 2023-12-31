@@ -83,20 +83,21 @@ export class PhotoDNACloudService {
             return undefined;
         }
 
-            let content = JSON.stringify({
-                "DataRepresentation": "inline",
-                "Value": imageData.data.toString('base64')
-            })
+        let content = JSON.stringify({
+            "DataRepresentation": "inline",
+            "Value": imageData.data.toString('base64')
+        })
 
-            let result = await http.post(this.Match_Post_Url, {
-                content,
-                params: {
-                    'enhance': 'false'
-                },
-                headers: {
-                    'Ocp-Apim-Subscription-Key': apiKey
-                }
-            })
+        let result = await http.post(this.Match_Post_Url, {
+            content,
+            params: {
+                'enhance': 'false'
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                'Ocp-Apim-Subscription-Key': apiKey
+            }
+        })
 
         if (!result) {
             logger.warn('We did not receive a response from the PhotoDNA API.')
@@ -109,9 +110,9 @@ export class PhotoDNACloudService {
         }
 
         logger.debug(`We received data back from the API:`, result.data);
-                let matchResult = result.data as IMatchResult;
-                matchResult.ImageData = imageData;
-                return matchResult;
+        let matchResult = result.data as IMatchResult;
+        matchResult.ImageData = imageData;
+        return matchResult;
     }
 
     /**
