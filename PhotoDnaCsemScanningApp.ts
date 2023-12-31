@@ -180,7 +180,7 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
     }
 
     private async handleMatchingMessage(matchResult: IMatchResult, message: IMessage, read: IRead, persistence: IPersistence, builder: IMessageBuilder, http: IHttp, logger: ILogger): Promise<void> {
-        logger.warn('CSEM-MATCH', `enable automated report: ${this.enableAutomatedReport}`, `message ID: ${message.id}`, message.sender, matchResult);
+        logger.warn('CSEM-MATCH', `enable automated report: ${this.enableAutomatedReport}`, `message ID: ${message.id}`, message.sender, JSON.stringify(matchResult));
 
         if (this.quarantineChannel) {
             const targetRoom: IRoom | undefined = await read.getRoomReader().getByName(this.quarantineChannel);
