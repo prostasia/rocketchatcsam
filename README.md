@@ -11,8 +11,6 @@ Prerequisites
 * [Rocket.Chat Apps-Engine CLI](https://developer.rocket.chat/apps-engine/getting-started/rocket.chat-app-engine-cli)
 * A Rocket.Chat server version 3.8.0 or newer
 
-You may need to [add an SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) before installing the apps engine from NPM.
-
 Installation
 ============
 
@@ -91,7 +89,15 @@ The app generates logs when it screens images. They are reachable from the App I
 
 Setting up a local Rocket.Chat instance for testing and debugging is [very easy with Docker](https://docs.rocket.chat/deploy/deploy-rocket.chat/deploy-with-docker-and-docker-compose). If Docker Desktop's licensing terms are not favorable for your situation, [Rancher Desktop](https://rancherdesktop.io/) is an effective, free alternative.
 
-You may experience a transpiler bug while running `rc-apps package` or `rc-apps deploy` that prints an error message like `TypeError: PhotoDNACloudService_1.PhotoDNACloudService is not a constructor`, or `Settings.ts not found`. I was able to temporarily work around this by opening `%AppData%\npm\node_modules\@rocket.chat\apps-cli\node_modules\@rocket.chat\apps-compiler\compiler\TypescriptCompiler.js` and commenting out line 151, the call to `checkInheritance()`. YMMV. _-J. F. Gaulter 2023-12-31_
+If you're trying to use `npm` in PowerShell and a package has an @ symbol in the name, be sure to quote the package name, otherwise PowerShell may interpret the @ as the splat operator.
+
+`@rocket.chat/apps-cli@1.11.0` uses a custom TypeScript transpiler, `@rocket.chat/apps-compiler@0.4.0`, which currently has a bug that affects this project. When you run `rc-apps package` or `rc-apps deploy`, it fails with `TypeError: PhotoDNACloudService_1.PhotoDNACloudService is not a constructor`. I was able to temporarily work around this by opening TypescriptCompiler.js and commenting out line 151.
+* Line 151: `this.appValidator.checkInheritance(appInfo.classFile.replace(/\.ts$/, ''), result);`
+* Location on Windows: `%AppData%\npm\node_modules\@rocket.chat\apps-cli\node_modules\@rocket.chat\apps-compiler\compiler\TypescriptCompiler.js`
+* Location on *nix: `$(npm list -g | head -1)/node_modules/@rocket.chat/apps-cli/node_modules/@rocket.chat/apps-compiler/compiler/TypescriptCompiler.js`
+
+_-J. F. Gaulter 2023-12-31_
+
 
 Preventing child sexual abuse
 =============================
