@@ -31,7 +31,7 @@ Method 2: deploy directly to server
 
 1. Clone this repository
 2. run `npm install`
-3. Create a file called .rcappsconfig that resembles this:
+3. Create a file called ``.rcappsconfig`` that resembles this:
 ```
 {
     "url": "https://server.url",
