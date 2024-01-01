@@ -5,6 +5,8 @@
     "CSEM_Quarantine_Target_Channel_Description": "Channel to move CSEM quarantined images to. Be sure to create this channel as documented.",
     "CSEM_Limit_Analysis_To_Channels_Csv_Label": "Limit image analysis to specified channels",
     "CSEM_Limit_Analysis_To_Channels_Csv_Description": "A comma separated values list of channels (e.g. \"channelA,channelB\") to limit image upload analysis to, all channels if empty",
+    "CSEM_Watch_DMs_Label": "Analyze images in all DMs",
+    "CSEM_Watch_DMs_Description": "Analyzes images in all rooms of type 'direct room', even if a watch list is set in 'Limit analysis to specfied channels'.",
     "CSEM_Enable_Automated_Report_Label": "Enable automated content violation report",
     "CSEM_Enable_Automated_Report_Description": "Automatically report matching images to NCMEC",
     "CSEM_NCMEC_OrgName_Label": "Name of your Organization",
