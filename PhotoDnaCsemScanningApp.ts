@@ -17,7 +17,7 @@ import { SettingType, ISetting } from '@rocket.chat/apps-engine/definition/setti
 import { PhotoDNACloudService } from './helper/PhotoDNACloudService';
 import { IMatchResult } from './helper/IMatchResult';
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom';
-import { SETTING_PHOTODNA_API_KEY, SETTING_QUARANTINE_CHANNEL, SETTING_LIMIT_ANALYSIS_TO_CHANNELS, SETTING_NCMEC_USER, SETTING_NCMEC_PASSWORD, SETTING_ENABLE_AUTOMATED_REPORT, SETTING_NCMEC_ORGNAME, SETTING_NCMEC_REPORTER_NAME, SETTING_NCMEC_REPORTER_EMAIL, SETTING_NCMEC_ENABLE_TEST_MODE } from './Settings';
+import { SETTING_PHOTODNA_API_KEY, SETTING_QUARANTINE_CHANNEL, SETTING_LIMIT_ANALYSIS_TO_CHANNELS, SETTING_WATCH_DMS, SETTING_NCMEC_USER, SETTING_NCMEC_PASSWORD, SETTING_ENABLE_AUTOMATED_REPORT, SETTING_NCMEC_ORGNAME, SETTING_NCMEC_REPORTER_NAME, SETTING_NCMEC_REPORTER_EMAIL, SETTING_NCMEC_ENABLE_TEST_MODE } from './Settings';
 
 export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModify {
 
@@ -26,6 +26,7 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
     private quarantineChannel: string;
     private enableAutomatedReport: boolean;
     private watchedRoomsId: Set<string> | undefined;
+    private watchDMs: boolean;
 
     constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
         super(info, logger, accessors);
@@ -59,6 +60,15 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
             public: false,
             i18nLabel: 'CSEM_Limit_Analysis_To_Channels_Csv_Label',
             i18nDescription: 'CSEM_Limit_Analysis_To_Channels_Csv_Description',
+        });
+        await configuration.settings.provideSetting({
+            id: SETTING_WATCH_DMS,
+            type: SettingType.BOOLEAN,
+            packageValue: false,
+            required: true,
+            public: false,
+            i18nLabel: 'CSEM_Watch_DMs_Label',
+            i18nDescription: 'CSEM_Watch_DMs_Description',
         });
         await configuration.settings.provideSetting({
             id: SETTING_ENABLE_AUTOMATED_REPORT,
@@ -128,8 +138,9 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
     public async onEnable(environment: IEnvironmentRead, configurationModify: IConfigurationModify): Promise<boolean> {
         this.quarantineChannel = await environment.getSettings().getValueById(SETTING_QUARANTINE_CHANNEL);
         this.enableAutomatedReport = await environment.getSettings().getValueById(SETTING_ENABLE_AUTOMATED_REPORT);
-        let limitRoomNamesCsv = await environment.getSettings().getValueById(SETTING_LIMIT_ANALYSIS_TO_CHANNELS)
+        let limitRoomNamesCsv = await environment.getSettings().getValueById(SETTING_LIMIT_ANALYSIS_TO_CHANNELS);
         this.initLimitRoomNamesSet(limitRoomNamesCsv);
+        this.watchDMs = await environment.getSettings().getValueById(SETTING_WATCH_DMS);
         return true;
     }
 
@@ -138,6 +149,8 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
             this.quarantineChannel = setting.value;
         } else if (SETTING_LIMIT_ANALYSIS_TO_CHANNELS === setting.id) {
             await this.initLimitRoomNamesSet(setting.value);
+        } else if (SETTING_WATCH_DMS === setting.id) {
+            this.watchDMs = setting.value;
         } else if (SETTING_ENABLE_AUTOMATED_REPORT === setting.id) {
             this.enableAutomatedReport = setting.value;
         }
@@ -162,12 +175,23 @@ export class PhotoDnaCsemScanningApp extends App implements IPreMessageSentModif
     }
 
     async checkPreMessageSentModify(message: IMessage, read: IRead, http: IHttp): Promise<boolean> {
-        if (this.watchedRoomsId && this.watchedRoomsId.size > 0) {
-            if (!this.watchedRoomsId.has(message.room.id)) {
-                return false;
-            }
+        // https://developer.rocket.chat/reference/api/schema-definition/room
+        const roomTypes = {
+            dm: 'd',
+            chatroom: 'c',
+            private: 'p',
+            livechat: 'l'
         }
-        return this.photoDnaService.preMatchMessage(message, this.getLogger());
+        if (
+            this.watchedRoomsId === undefined
+            || this.watchedRoomsId.size === 0
+            || this.watchedRoomsId.has(message.room.id)
+            || (this.watchDMs && message.room.type === roomTypes.dm)
+        ) {
+            return this.photoDnaService.preMatchMessage(message, this.getLogger());
+        } else {
+            return false;
+        }
     }
 
     async executePreMessageSentModify(message: IMessage, builder: IMessageBuilder, read: IRead, http: IHttp, persistence: IPersistence): Promise<IMessage> {

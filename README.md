@@ -31,7 +31,7 @@ Method 2: deploy directly to server
 
 1. Clone this repository
 2. run `npm install`
-3. Create a file called .rcappsconfig that resembles this:
+3. Create a file called ``.rcappsconfig`` that resembles this:
 ```
 {
     "url": "https://server.url",
@@ -120,6 +120,8 @@ Changelog
   * Patched minimatch from 3.0.4 to 3.1.2 to mitigate security vulnerability
 * 0.3.2
   * Fix `Invalid or missing request parameter(s)` bug
+* 0.3.3
+  * Implemented setting to watch all direct rooms (DMs)
 
 Todos / Caveat
 ==============
