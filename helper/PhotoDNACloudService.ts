@@ -36,6 +36,7 @@ export class PhotoDNACloudService {
             logger.warn('Could not perform match operation on unsupported image type ' + imageMimeType);
             return false;
         }
+        logger.debug(`Will attempt to match message from ${message.sender.name} in room #   ${message.room.id} at ${message.createdAt}.`);
         return true;
     }
 
@@ -63,7 +64,8 @@ export class PhotoDNACloudService {
             contentType: imageMimeType,
             filename: imageFileName,
             data: imageBuffer
-        });
+        }, logger);
+        logger.debug(`Performed match operation on ${imageFileName} with match result: ${result?.IsMatch}.`);
         return result;
     }
 
@@ -74,30 +76,43 @@ export class PhotoDNACloudService {
      * @param imageData
      * @see https://developer.microsoftmoderator.com/docs/services/57c7426e2703740ec4c9f4c3/operations/57c7426f27037407c8cc69e6
      */
-    private async performMatchOperation(http: IHttp, read: IRead, imageData: IImageData): Promise<IMatchResult | undefined> {
+    private async performMatchOperation(http: IHttp, read: IRead, imageData: IImageData, logger: ILogger): Promise<IMatchResult | undefined> {
         const apiKey = await read.getEnvironmentReader().getSettings().getValueById(SETTING_PHOTODNA_API_KEY);
-        if (apiKey) {
-            let content = JSON.stringify({
-                "DataRepresentation": "inline",
-                "Value": imageData.data.toString('base64')
-            })
-
-            let result = await http.post(this.Match_Post_Url, {
-                content,
-                params: {
-                    'enhance': 'false'
-                },
-                headers: {
-                    'Ocp-Apim-Subscription-Key': apiKey
-                }
-            })
-            if (result.data) {
-                let matchResult = result.data as IMatchResult;
-                matchResult.ImageData = imageData;
-                return matchResult;
-            }
+        if (!apiKey) {
+            logger.warn("SETTING_PHOTODNA_API_KEY was not found in environment.")
+            return undefined;
         }
-        return undefined;
+
+        let content = JSON.stringify({
+            "DataRepresentation": "inline",
+            "Value": imageData.data.toString('base64')
+        })
+
+        let result = await http.post(this.Match_Post_Url, {
+            content,
+            params: {
+                'enhance': 'false'
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                'Ocp-Apim-Subscription-Key': apiKey
+            }
+        })
+
+        if (!result) {
+            logger.warn('We did not receive a response from the PhotoDNA API.')
+            return undefined;
+        }
+
+        if (!result.data) {
+            logger.warn(`We received a response from the API, but it does not contain data.`);
+            return undefined;
+        }
+
+        logger.debug(`We received data back from the API:`, result.data);
+        let matchResult = result.data as IMatchResult;
+        matchResult.ImageData = imageData;
+        return matchResult;
     }
 
     /**
